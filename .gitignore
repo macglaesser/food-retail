@@ -1,3 +1,2 @@
-./venv
-
-./local-data/Active_Sales_Tax_Permit_Holders_20250828.csv
+venv/
+local-data/Active_Sales_Tax_Permit_Holders_20250828.csv
