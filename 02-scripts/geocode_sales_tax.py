@@ -30,7 +30,7 @@ batch_df = pd.DataFrame({
     3: df['OUTLET_STATE'],
     4: df['OUTLET_ZIP_CODE'].astype(str)
 })
-batch_file = "../local-data/batch_input.csv"
+batch_file = "../local-data/sales_tax_batch_input.csv"
 batch_df.to_csv(batch_file, index=False, header=False)
 
 # Now that we have our configured package, we can send a POST request to geocode batch processing
@@ -46,7 +46,7 @@ response = requests.post(url, files=files, data=data)
 
 # Now we have the responses so lets save them and parse them
 print("==== SAVING AND PARSING RESULTS ====")
-output_file = "../local-data/geocoded_results.csv"
+output_file = "../local-data/sales_tax_geocoded_results.csv"
 with open(output_file, 'wb') as f:
     f.write(response.content)
 geocoded_df = pd.read_csv(output_file, header=None)
@@ -64,5 +64,5 @@ geocoded_df['ID'] = geocoded_df['ID'].astype(str)
 final_df = df.merge(geocoded_df[['ID', 'Latitude', 'Longitude', 'Match_Status', 'Match_Type']], on='ID', how='left')
 
 # Save the final Data File
-final_df.to_csv("../local-data/final_geocoded_output.csv", index=False)
-print("Geocoding complete. Results saved to final_geocoded_output.csv")
+final_df.to_csv("../local-data/sales_tax_geocoded_final_output.csv", index=False)
+print("Geocoding complete. Results saved to sales_tax_geocoded_final_output.csv")
