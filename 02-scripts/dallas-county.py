@@ -1,5 +1,6 @@
 from utils.geocode_sales_tax import geocode_sales_tax_data
 from utils.merge_snap_geocoded_sales_tax import merge_snap_sales_tax
+from utils.maps import map_retail_locations
 import pandas as pd
 
 # For Dallas County (original)
@@ -31,4 +32,10 @@ merge_snap_sales_tax(
     lonMin=dallas_bounds['lon_min'],
     lonMax=dallas_bounds['lon_max'],
     outputPath="../local-data/county/dallas/snap_sales_tax_merged_data_dallas.csv"
+)
+
+map_retail_locations(
+    inputPath="../local-data/county/dallas/snap_sales_tax_merged_data_dallas.csv",
+    location=[32.7767, -96.7970],
+    outputPath="../assets/dallas/food_retail_locations_dallas.html"
 )

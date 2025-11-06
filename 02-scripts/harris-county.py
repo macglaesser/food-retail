@@ -1,5 +1,6 @@
 from utils.geocode_sales_tax import geocode_sales_tax_data
 from utils.merge_snap_geocoded_sales_tax import merge_snap_sales_tax
+from utils.maps import map_retail_locations
 import pandas as pd
 
 # For harris County (original)
@@ -31,4 +32,10 @@ merge_snap_sales_tax(
     lonMin=harris_bounds['lon_min'],
     lonMax=harris_bounds['lon_max'],
     outputPath="../local-data/county/harris/snap_sales_tax_merged_data_harris.csv"
+)
+
+map_retail_locations(
+    inputPath="../local-data/county/harris/snap_sales_tax_merged_data_harris.csv",
+    location=[29.7604, -95.3698],
+    outputPath="../assets/harris/food_retail_locations_harris.html"
 )
