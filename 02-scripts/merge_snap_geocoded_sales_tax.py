@@ -3,7 +3,7 @@ import uuid
 
 # Read the datasets
 snap = pd.read_csv("../local-data/SNAP_Retailer_Location_data.csv", encoding='latin-1')
-tax = pd.read_csv("../local-data/final_geocoded_output.csv")  # Using the geocoded output
+tax = pd.read_csv("../local-data/sales_tax_geocoded_final_output.csv")  # Using the geocoded output
 
 # Filter SNAP data for Dallas County, TX
 snap = snap[(snap['County'] == 'DALLAS') & (snap['State'] == 'TX')]
@@ -151,6 +151,18 @@ if len(tax_unmatched) > 0:
     # Combine datasets
     merged_data = pd.concat([snap_reordered, tax_mapped_reordered], ignore_index=True)
     
+    merged_data.loc[
+        (merged_data['STORE_TYPE'] == 'Other') & 
+        (merged_data['STORE_NAME'].str.lower().str.contains('dollar', case=False, na=False)), 
+        'STORE_TYPE'
+    ] = 'Discount Retail'
+
+    merged_data.loc[
+        (merged_data['STORE_TYPE'] == 'Other') & 
+        (merged_data['STORE_NAME'].str.lower().str.contains('walgreens|cvs', case=False)), 
+        'STORE_TYPE'
+    ] = 'Pharmacy'
+
     print(f"\nFinal dataset:")
     print(f"Original SNAP records: {len(snap)}")
     print(f"Added tax records: {len(tax_mapped)}")
@@ -160,10 +172,10 @@ if len(tax_unmatched) > 0:
     print(final_store_counts)
     
     # Save merged data
-    merged_data.to_csv("../local-data/merged_data.csv", index=False)
-    print(f"\nMerged data saved to ../local-data/merged_data.csv")
+    merged_data.to_csv("../local-data/snap_sales_tax_merged_data.csv", index=False)
+    print(f"\nMerged data saved to ../local-data/snap_sales_tax_merged_data.csv")
     
 else:
     print("\nNo valid records to add after filtering.")
-    snap.to_csv("../local-data/merged_data.csv", index=False)
+    snap.to_csv("../local-data/snap_sales_tax_merged_data.csv", index=False)
     print("Saved original SNAP data as merged_data.csv")

@@ -221,7 +221,7 @@ def classify_cuisine(row):
 
 
 try:
-    df = pd.read_csv('../local-data/foodRetailLocations.csv')
+    df = pd.read_csv('../local-data/snap_sales_tax_merged_data.csv')
     df = df[~df['STORE_NAME'].str.contains("BATH & BODY WORKS", case=False, na=False)]    
     df = df[~df['STORE_NAME'].str.contains("DALLAS NOVELTIES & BEAUTY SUPPLY", case=False, na=False)]
     print("CSV loaded successfully. Shape:", df.shape)
@@ -235,7 +235,7 @@ try:
     df['SUBCATEGORY'] = classification_results.apply(lambda x: x[2])
     df['SUB_SUBCATEGORY'] = classification_results.apply(lambda x: x[3])
     
-    output_filename = '../local-data/CuisineRetailLocations2.csv'
+    output_filename = '../local-data/snap_sales_tax_cusine_merged_data.csv'
     df.to_csv(output_filename, index=False)
     
     print(f"\nProcessing complete! New file saved as '{output_filename}'")
@@ -276,6 +276,6 @@ try:
         print(uncategorized[:50])
 
 except FileNotFoundError:
-    print("Error: 'foodRetailLocations.csv' not found. Please make sure the file is in the correct directory.")
+    print("Error: 'snap_sales_tax_merged_data.csv' not found. Please make sure the file is in the correct directory.")
 except Exception as e:
     print(f"An error occurred: {e}")
