@@ -1,5 +1,9 @@
+# Virtual environment
 venv/
+
+# Large Local Data Files
 local-data/Active_Sales_Tax_Permit_Holders_20250828.csv
 local-data/ACCOUNT_INFO.CSV
 local-data/COM_DETAIL.CSV
 local-data/ACCOUNT_APPRL_YEAR.CSV
+local-data/Active_Sales_Tax_Permit_Holders_20251106.csv
