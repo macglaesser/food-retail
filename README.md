@@ -227,3 +227,10 @@ python <county-name>-county.py
 Once you run this script successfully, you will find:
 - Merged data in `local-data/county/<county-name>/snap_sales_tax_merged_data_<county-name>.csv`
 - Interactive map in `assets/<county-name>/food_retail_locations_<county-name>.html`
+
+# Miscellaneous Notes of Features not yet reproducible
+- **Cuisine Type Sold**: The cuisine categorization is a work in progress and not yet fully reproducible. Future updates will include scripts and methodologies for categorizing cuisine types based on retailer names and other attributes.
+- **Retail Size Classification**: The classification of retail establishments by size using appraisal data is also a work in progress. Future updates will provide scripts and methodologies for integrating appraisal data into the analysis.
+- **Property Data Merging**: The merging of property data to enhance retailer profiles is under development. Future updates will include scripts and methodologies for incorporating property characteristics into the analysis.
+- **R Scripts for Correlations**: Some correlation analyses were performed using R scripts that are not included in this repository. Future updates may include these scripts for enhanced reproducibility.
+- **PowerBI Visualization for Store Type by Ethnicity**: Some visualizations were created using PowerBI, which are not reproducible through the current codebase. Future updates may include alternative visualization scripts using Python libraries.
