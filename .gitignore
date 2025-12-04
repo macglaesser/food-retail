@@ -5,7 +5,4 @@ venv/
 __pycache__/
 
 # Large Local Data Files
-local-data/state/texas/Active_Sales_Tax_Permit_Holders_20251106.csv
-local-data/county/dallas/ACCOUNT_INFO.CSV
-local-data/county/dallas/COM_DETAIL.CSV
-local-data/county/dallas/ACCOUNT_APPRL_YEAR.CSV
+local-data/*
