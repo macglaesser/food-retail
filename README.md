@@ -1,46 +1,86 @@
+# **TEXAS FOOD RETAILER LOCATION DISCOVERY**
 
-# **DALLAS COUNTY FOOD RETAILER LANDSCAPE**
-
-## Dallas Food Desert Definition
-Dallas food deserts are socioeconomically distressed neighborhoods where residents face systemic barriers to obtaining affordable, nutritious food. According to the U.S. Department of Agriculture, a food desert is identified as a low-income census tract with either a poverty rate of 20 percent or more, a median family income below 80 percent of the statewide median, or, in metropolitan areas, a median family income below 80 percent of the surrounding metropolitan median. In addition, these tracts are considered low-access when at least 500 people or one-third of the population live more than one mile from the nearest supermarket, supercenter, or large grocery store in urban areas. In Dallas, these conditions are compounded by geographic isolation, limited transportation options, and the high cost of healthy foods, which together restrict residents’ ability to consistently access fresh produce and other healthful options. As a result, many households in these areas are forced to rely on convenience stores and fast-food outlets, reinforcing cycles of poor nutrition and food insecurity.
-
-## Overview
-This project presents a comprehensive methodology for identifying and mapping active food retail establishments across Dallas County, Texas. The primary objective is to produce a reproducible, up-to-date map of active food retail outlets by combining two complementary data sources: USDA SNAP retailer records and Texas sales tax permit data.
+## Document Overview
+This documentation outlines the methodology behind discovering and mapping food retail establishments for counties in Texas. It details the data sources utilized, the step-by-step approach for geocoding and merging datasets, and the structure of the codebase developed to support reproducibility of the analysis.
 
 A key challenge in food retail mapping lies in obtaining accurate, up-to-date data for smaller independent retailers. This project addresses that challenge through systematic geocoding, deterministic matching, and careful validation workflows. The provided datasets, code, and intermediate artifacts support full reproducibility of the analysis pipeline.
 
-## Research Goals
-- Produce a reproducible, up-to-date map of active food retail outlets in Dallas County
-- Combine SNAP and sales tax data to achieve broader coverage than either source alone
-- Provide code and intermediate artifacts that support reproducibility of geocoding, matching, and mapping workflows
-- Generate the final dataset (local-data/foodRetailLocations.csv) for research and analysis
+## Directory Structure
 
-## Project Structure
+Below you will find the directory structure of the project, illustrating how data, scripts, and outputs are organized for clarity and ease of use. Note that some files listed below are not included in the repository due to size constraints and some are not yet set up for reproducibility. The files and scripts noted below with comments are essential for reproducing the current analysis.
+
 ```
-priv-study/
-├── 01-eda-notebooks/                                    # View Basic ERA
-│   ├── active_snap.ipynb
-│   ├── merging.ipynb
-│   └── sales_tax.ipynb
-├── 02-scripts/
-│   ├── merge.py                                         # Script to Merge SNAP and Tax data
-│   └── sales_tax.py                                     # Script to geocode Lat/Long for Tax Data
-├── local-data/ 
-│   ├── Active_Sales_Tax_Permit_Holders_20250828.csv     # Sales Tax download       
-│   ├── batch_input.csv                                  # Intermidate sales tax
-│   ├── final_geocoded_output.csv                        # Sales Tax with lat and long
-│   ├── foodRetailLocations.csv                          # The final enriched Dataset
-│   ├── geocoded_results.csv                             # Intermidiate sales tax
-│   ├── merged_data.csv                                  # SNAP + Tax w/o custom store types
-│   └── SNAP_Retailer_Location_Data.csv                  # Active SNAP download
-├── graphs/
-│   └── graphs.ipynb                                     # Example Graph for R Script  
+FOOD-RETAIL/
+├── assets/                                    
+│   ├── dallas/
+│   │     └── food_retail_locations_dallas.html                 # Primary output map for Dallas County
+│   └── harris/
+│        └── food_retail_locations_harris.html                  # Primary output map for Harris County   
+│ 
+├── graphs/                                                     # Work in Progress visualizations
+│   ├── cuisine.ipynb
+│   ├── location_size_map.ipynb                                          
+│   └── location_size.ipynb      
+│                              
+├── local-data/                        
+│   ├── county/  
+│   │   ├── dallas/                                         
+│   │   │    ├── ACCOUNT_APPRL_YEAR.csv
+│   │   │    ├── ACCOUNT_INFO.csv
+│   │   │    ├── COM_DETAIL.csv
+│   │   │    ├── sales_tax_batch_input_dallas.csv               # Prepared batch input geocoding
+│   │   │    ├── sales_tax_geocoded_final_output_dallas.csv     # Final geocoded output   
+│   │   │    ├── sales_tax_geocoded_results_dallas.csv          # Raw geocoding results from Census batch geocoder
+│   │   │    ├── snap_sales_cuisine_property_data_merged.csv
+│   │   │    ├── snap_sales_tax_cuisine_merged_data.csv
+│   │   │    ├── snap_sales_tax_merged_data_dallas.csv          # Merged SNAP + Sales Tax data
+│   │   │    └── unmatched_retail_addresses.csv  
+│   │   └── harris/
+│   │   │    ├── building_other.csv
+│   │   │    ├── building_res.csv
+│   │   │    ├── real_acct.csv
+│   │   │    ├── sales_tax_batch_input_harris.csv              # Prepared batch input geocoding
+│   │   │    ├── sales_tax_geocoded_final_output_harris.csv    # Final geocoded output
+│   │   │    ├── sales_tax_geocoded_results_harris.csv         # Raw geocoding results from Census batch geocoder
+│   │   └──  └── snap_sales_tax_merged_data_harris.csv         # Merged SNAP + Sales Tax data                        
+│   ├── state/  
+│   │   └── texas/   
+│   │        └── Active_Sales_Tax_Permit_Holders.csv          # Essential sales tax permit data source                       
+│   └── united-states/   
+│       └── SNAP_Retailer_Location_data.csv                   # Essential USDA SNAP retailer data source
+│                        
+├── scripts/
+│   ├── utils/
+│   │   ├── __pycache__/
+│   │   ├── __init__.py
+│   │   ├── geocode_sales_tax.py                              # Geocoding utility functions
+│   │   ├── maps.py                                           # Mapping utility functions
+│   │   └── merge_snap_geocoded_sales_tax.py                  # Merging utility functions
+│   ├── WIP-misc/                                             # Work in progress scripts
+│   │   ├── categorizing_cuisine_geography.py
+│   │   └── property_data_merge.py                            
+│   ├── dallas-county.py                                      # Main script for Dallas County analysis   
+│   └── harris-county.py                                      # Main script for Harris County analysis
+│
+├── venv/  
+├── .gitignore                            
 ├── README.md
+├── report.md
 └── requirements.txt
 ```
 
-## Data Sources
+## Essential Data Sources for Reproducibility
+The methodology relies on two primary data sources for reproducing the food retail mapping:
+1. **USDA SNAP Retailer Data**: This dataset provides information on retailers authorized to accept Supplemental Nutrition Assistance Program (SNAP) benefits. It includes retailer names, addresses, and geocoded locations (latitude/longitude).
+2. **Sales Tax Permit Data**: This dataset contains information on businesses with active sales tax permits, which can be used to identify active retail establishments. It includes business names, addresses, and permit status.
 
+The next three data sources are optional and not reproducible as of now, but can enhance the analysis particularly in understanding business characteristics:
+
+3. **Account Appraisal Year**: This dataset provides appraisal values and property characteristics for businesses, which can help in assessing the economic status of food retail establishments.
+4. **Account Information**: This dataset contains detailed information about business accounts, specifically their addresses for merging with the parent dataset, which can be useful for identifying and categorizing food retail establishments.
+5. **Commercial Detail**: This dataset offers information on GROSS_BLDG_AREA and other commercial property details that can be useful for understanding the scale of food retail operations.
+
+## Accessing the Data Sources
 ### 1. USDA Supplemental Nutrition Assistance Program (SNAP) Data
 **Source**: [USDA Retail Locator](https://www.fns.usda.gov/snap/retailer-locator). 
 - **Current Data**: [Active SNAP Retailers](https://usda-snap-retailers-usda-fns.hub.arcgis.com/datasets/8b260f9a10b0459aa441ad8588c2251c/explore?location=2.901026%2C-14.737150%2C2.90)
@@ -49,45 +89,25 @@ priv-study/
 ### 2. Taxpayers With Active Sales Tax Permits
 **Source**: [data.texas.gov Active Sales Tax Permit Holders](https://data.texas.gov/Government-and-Taxes/Active-Sales-Tax-Permit-Holders/jrea-zgmq/about_data)
 
-SNAP retailers are businesses authorized by the U.S. Department of Agriculture (USDA) to accept Supplemental Nutrition Assistance Program benefits for eligible food purchases.
+## Methodology Overview
+The methodology involves several key steps to ensure accurate identification and mapping of food retail establishments:
+1. **Data Acquisition**: Download the latest versions of the USDA SNAP retailer data and sales tax permit data.
+2. **Data Cleaning and Preprocessing**: Standardize and clean the datasets to ensure consistency in formats, particularly for addresses.
+3. **Geocoding**: Use geocoding services to obtain latitude and longitude for addresses in the sales tax permit dataset that lack geocoded information.
+4. **Deterministic Matching**: Implement deterministic matching techniques to link records from the SNAP dataset with the sales tax permit dataset based on standardized business names and addresses.
+5. **Data Integration**: Merge the datasets to create a comprehensive list of food retail establishments, ensuring that duplicates are handled appropriately.
+6. **Cuisine Type Sold (optional)**: Analyze the combined dataset to identify the types of cuisine sold at each establishment.
+7. **Retail Size Classification (optional)**: Classify food retail establishments based on size, appraisal, and location metrics.
+8. **Mapping and Visualization**: Create maps and visualizations to illustrate the distribution of food retail establishments within the specified county.
 
-**Strengths:**
+# Specific Methodology for Data Merging and Geocoding
+## SNAP Retailer Data
+The SNAP data is ready for immediate use with pre-geocoded coordinates.
 
-- High data quality with standardized geocoding (latitude/longitude)
-- Current and historical coverage (2004-2024)
-- Regular updates and validation by USDA
-
-**Limitations:**
-
-- Limited to SNAP-authorized retailers only
-- Excludes retailers that choose not to participate in SNAP
-- May underrepresent higher-end retailers and specialty food stores
-
-### Sales Tax Permit Dataset
-This comprehensive dataset includes all Texas businesses with active sales tax permits, encompassing food retailers alongside other business types.
-
-**Strengths**
-- Broader coverage of retail establishments
-- Current and frequently updated
-- Includes retailers regardless of SNAP participation
-
-**Limitations**
-- Lacks geocoded coordinates (address-only)
-- Requires filtering to isolate food retailers (NAICS code 445)
-- Requires geocoding step to obtain coordinates
-
-
-&nbsp;
-# Methodology
-## Approach 1: SNAP Retailer Data
-The original methodology relied on historical SNAP retailer records, which required estimating which stores remained operational. By switching to USDA's published list of active SNAP retailers, we eliminate guesswork about store status and gain a definitive snapshot of currently operating SNAP-authorized food retailers.
-
-The SNAP data is ready for immediate use with no missing values in fields of interest and includes pre-geocoded coordinates.
-
-## Approach 2: Sales Tax Permit Data with Geocoding
+## Sales Tax Permit Data with Geocoding
 Since the sales tax data lacks coordinates, we geocode addresses using the U.S. Census Bureau's batch geocoding service. The process involves:
 
-1. Filtering: Extract food retailers (NAICS code 445*) in Dallas County (county code 57.0)
+1. Filtering: Extract food retailers (NAICS code 445*) in a County (ex: Dallas County Code 57.0)
 2. Preparation: Format addresses for batch geocoding
 3. Geocoding: Submit addresses to Census batch geocoder via POST request
 4. Quality Control: Review match status and match type from geocoder
@@ -105,18 +125,6 @@ The merge process uses deterministic matching based on composite keys (address +
 
 This conservative approach avoids fuzzy matching to minimize false positives while capturing retailers missing from SNAP data.
 
-# Codebase Walk Through
-
-## Data Files in local-data/
-
-- `SNAP_Retailer_Location_data.csv` — Raw USDA SNAP active retailer dataset
-- `Active_Sales_Tax_Permit_Holders_YYYYMMDD.csv` — Raw Texas sales tax permit dataset
-- `batch_input.csv` — Prepared CSV for Census batch geocoder
-- `geocoded_results.csv` — Raw response from Census batch geocoder POST request
-- `final_geocoded_output.csv` — Sales tax records merged with geocoder results (includes Latitude, Longitude, Match_Status, Match_Type)
-- `merged_data.csv` — Combined SNAP + non-duplicated tax records
-- `foodRetailLocations.csv` — Final enriched dataset for mapping and analysis (primary output)
-
 # Reproducing the Analysis
 
 ## Step 1: Installation
@@ -129,45 +137,93 @@ Create a virtual environment and install dependencies
 
 ## Step 2: Prepare Data
 Ensure the following raw data files are in `local-data/`:
-- `SNAP_Retailer_Location_data.csv` (from USDA)
-- `Active_Sales_Tax_Permit_Holders_YYYYMMDD.csv` (from data.texas.gov)
+- `united-states/SNAP_Retailer_Location_data.csv` (from USDA)
+- `state/texas/Active_Sales_Tax_Permit_Holders_YYYYMMDD.csv` (from data.texas.gov)
 
+## Step 3: Set Up Directory Structure for Your County
+
+Before running the analysis, you need to establish the proper directory structure for your target county (e.g., Harris County, Travis County, etc.).
+
+### 3.1 Create County-Specific Script
+Create a new Python file in the `scripts/` directory named after your county:
 ```
-cd 02-scripts
-python sales_tax.py
+scripts/<county-name>-county.py
 ```
-This script:
-- Filters sales tax data to food retailers (NAICS 445*) in Dallas County
-- Prepares addresses for batch geocoding
-- Posts to Census batch geocoder API
-- Saves geocoded results with coordinates
+Example: `scripts/harris-county.py` or `scripts/travis-county.py`
 
-Outputs:
-- local-data/batch_input.csv
-- local-data/geocoded_results.csv
-- local-data/final_geocoded_output.csv
+### 3.2 Create County Data Directories
+Set up the required folder structure in both `assets/` and `local-data/`:
 
-## Step 3: Merge Data
-```
-cd 02-scripts (if not already here)
-python merge.py
-```
+```bash
+# Create asset directory for map outputs
+mkdir assets/<county-name>
 
-This script:
-- Compares compares existing Retail Locations in `SNAP_Retailer_Location_data.csv` with `final_geocoded_output.csv`
-- If it exists in SNAP ignore, else inject into the dataframe
-
-Outputs:
-- `local-data/foodRetailLocations.csv`
-
-## Step 4: Create Cusine Types for Ethnicity and Racial Observance
-```
-cd 02-scripts (if not already here)
-python categorizing_store_type.py
+# Create data directory for intermediate files
+mkdir local-data/county/<county-name>
 ```
 
-This script:
-- Uses predefined key words located within store names to create groups of cusine types
+## Step 4: Configure County Script Template
 
-Outputs:
-- `local-data/CusineRetailLocations.csv`
+Copy and modify the template below into the python script you previously created for your target county. You'll need to update:
+- **County Code**: Find the appropriate FIPS code from the sales tax permit data
+- **County Name**: Use the official county name (e.g., 'HARRIS', 'TRAVIS')
+- **Geographic Bounds**: Define lat/lon boundaries that encompass your county
+- **File Paths**: Update all paths to reference your county directory
+
+**Example Structure for Dallas:**
+
+```python
+from utils.geocode_sales_tax import geocode_sales_tax_data
+from utils.merge_snap_geocoded_sales_tax import merge_snap_sales_tax
+from utils.maps import map_retail_locations
+import pandas as pd
+
+# For Dallas County (original)
+geocode_sales_tax_data(
+    inputData="../local-data/state/texas/Active_Sales_Tax_Permit_Holders_20251106.csv",
+    countyCode='57.0',
+    naicsCode='445',
+    batchOutputPath="../local-data/county/dallas/sales_tax_batch_input_dallas.csv",
+    geocodedOutputPath="../local-data/county/dallas/sales_tax_geocoded_results_dallas.csv",
+    finalOutputPath="../local-data/county/dallas/sales_tax_geocoded_final_output_dallas.csv"
+)
+
+# Dallas County bounds
+dallas_bounds = {
+    'lat_min': 32.0,
+    'lat_max': 33.5,
+    'lon_min': -97.5,
+    'lon_max': -96.0
+}
+
+# Run merge for Dallas County
+merge_snap_sales_tax(
+    snapPath="../local-data/united-states/SNAP_Retailer_Location_data.csv",
+    taxPath="../local-data/county/dallas/sales_tax_geocoded_final_output_dallas.csv",
+    county='DALLAS',
+    state='TX',
+    latMin=dallas_bounds['lat_min'],
+    latMax=dallas_bounds['lat_max'],
+    lonMin=dallas_bounds['lon_min'],
+    lonMax=dallas_bounds['lon_max'],
+    outputPath="../local-data/county/dallas/snap_sales_tax_merged_data_dallas.csv"
+)
+
+map_retail_locations(
+    inputPath="../local-data/county/dallas/snap_sales_tax_merged_data_dallas.csv",
+    location=[32.7767, -96.7970],
+    outputPath="../assets/dallas/food_retail_locations_dallas.html"
+)
+```
+
+## Step 5: Run Scripts
+Execute your county-specific script to run the full analysis pipeline:
+```
+cd scripts
+python <county-name>-county.py
+```
+
+## Step 6: Review Outputs
+Once you run this script successfully, you will find:
+- Merged data in `local-data/county/<county-name>/snap_sales_tax_merged_data_<county-name>.csv`
+- Interactive map in `assets/<county-name>/food_retail_locations_<county-name>.html`
