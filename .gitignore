@@ -6,3 +6,7 @@ __pycache__/
 
 # Large Local Data Files
 local-data/*
+
+assets/dallas/*.png
+
+report.pdf
